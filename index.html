@@ -3184,30 +3184,9 @@ var qrcode = function() {
 
   document.getElementById('checkoutBtn').addEventListener('click', openPaymentModal);
 
-  // Busca o link de pagamento em segundo plano (via fetch) e só então redireciona.
-  // Isso evita que o navegador precise "visitar" o script.google.com diretamente,
-  // o que trava em navegadores embutidos como o do WhatsApp/Instagram.
-  cardPayLink.addEventListener('click', async () => {
-    const errorMsg = document.getElementById('cardPayError');
-    errorMsg.style.display = 'none';
-    cardPayLink.disabled = true;
-    cardPayLink.textContent = 'Gerando link de pagamento...';
-
-    try {
-      const url = `${MERCADOPAGO_CHECKOUT_ENDPOINT}?amount=${encodeURIComponent(currentCartTotal.toFixed(2))}`;
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      } else {
-        throw new Error(data.error || 'Link de pagamento não encontrado.');
-      }
-    } catch (err) {
-      errorMsg.style.display = 'block';
-      cardPayLink.disabled = false;
-      cardPayLink.textContent = 'Pagar com cartão';
-    }
+  cardPayLink.addEventListener('click', () => {
+    const url = `${MERCADOPAGO_CHECKOUT_ENDPOINT}?amount=${encodeURIComponent(currentCartTotal.toFixed(2))}`;
+    window.location.href = url;
   });
 
   document.getElementById('modalClose').addEventListener('click', () => overlay.classList.remove('open'));
